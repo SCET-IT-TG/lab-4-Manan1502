@@ -1,6 +1,6 @@
 /* Part 0: Environment Setup */
 
-db.getSiblingDB("movieDB");
+db = db.getSiblingDB("movieDB");
 
 db.movies.insertMany([
   { "title": "3 Idiots", "director": "Rajkumar Hirani", "year": 2009, "rating": 8.4, "genres": ["Comedy", "Drama"], "plot": "Two friends start a quest for a lost buddy who was once an optimistic engineering student." },
@@ -27,25 +27,18 @@ db.movies.find({ rating: { $gt: 8.0 } }).explain("executionStats");
 /* Part 2: Single Field Index */
 
 db.movies.createIndex({ rating: 1 });
-
 db.movies.find({ rating: { $gt: 8.0 } }).explain("executionStats");
 
 /* Part 3: Sorting Performance */
 
 db.movies.find().sort({ year: -1 }).explain("executionStats");
-
-db.movies.createIndex({ year: -1 });
-
+db.movies.createIndex({ year: 1 });
 db.movies.find().sort({ year: -1 }).explain("executionStats");
 
 /* Part 4: Compound Indexes */
 
 db.movies.createIndex({ director: 1, year: 1 });
-
-db.movies.find({
-  director: "S.S. Rajamouli",
-  year: { $gt: 2018 }
-});
+db.movies.find({ director: "S.S. Rajamouli", year: { $gt: 2018 } }).explain("executionStats");
 
 /* Part 5: Covered Queries */
 
@@ -57,12 +50,8 @@ db.movies.find(
 /* Part 6: Text Search */
 
 db.movies.createIndex({ plot: "text" });
-
-db.movies.find({
-  $text: { $search: "cricket gangster" }
-});
+db.movies.find({ $text: { $search: "cricket gangster" } });
 
 /* Part 7: Maintenance (List Indexes) */
 
 db.movies.getIndexes();
-
